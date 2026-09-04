@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>O.M.G. and S.O.S. — how they work, and how they were designed</title>
+<style>
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/cormorant-garamond@latest/latin-400-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/cormorant-garamond@latest/latin-500-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/cormorant-garamond@latest/latin-600-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'IBM Plex Serif';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-serif@latest/latin-400-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'IBM Plex Serif';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-serif@latest/latin-500-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'IBM Plex Serif';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-serif@latest/latin-600-normal.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'IBM Plex Serif';
+    src: url('https://cdn.jsdelivr.net/fontsource/fonts/ibm-plex-serif@latest/latin-400-italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Monaspace Radon';
+    src: url('https://cdn.jsdelivr.net/gh/githubnext/monaspace@main/fonts/Web%20Fonts/Static%20Web%20Fonts/Monaspace%20Radon/MonaspaceRadon-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+@font-face {
+    font-family: 'Monaspace Radon';
+    src: url('https://cdn.jsdelivr.net/gh/githubnext/monaspace@main/fonts/Web%20Fonts/Static%20Web%20Fonts/Monaspace%20Radon/MonaspaceRadon-Medium.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+:root {
+    --bg: #0a0a0a;
+    --bg-panel: #111111;
+    --bg-panel-accent: rgba(167,139,250,0.10);
+    --text: #ffffff;
+    --text-dim: rgba(255,255,255,0.65);
+    --text-dimmer: rgba(255,255,255,0.40);
+    --text-dimmest: rgba(255,255,255,0.18);
+    --accent: #a78bfa;
+    --accent-glow: rgba(167,139,250,0.45);
+    --accent-dim: rgba(167,139,250,0.14);
+    --secondary: #fbbf24;
+    --status-success: #4ade80;
+    --status-warning: #fbbf24;
+    --status-error: #f87171;
+    --status-info: #60a5fa;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.16);
+    --font-display: 'Cormorant Garamond', 'IBM Plex Serif', Charter, Georgia, serif;
+    --font-body: 'IBM Plex Serif', Charter, Georgia, serif;
+    --font-brand: 'Cormorant Garamond', 'IBM Plex Serif', Charter, Georgia, serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 10pt;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    /* Better serif rendering on dark backgrounds */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+
+@page {
+    /* Use explicit mm dimensions instead of named size keyword.
+       Chrome's named-size handling can produce slightly smaller
+       printable areas than the literal page dimensions, leaving
+       gaps at right/bottom edges. Explicit mm forces full bleed. */
+    size: 215.9mm 279.4mm;
+    margin: 0;
+}
+
+.page {
+    width: 215.9mm;
+    padding: 0.6in 0.7in 0.6in 0.7in;
+    /* Each section starts on a fresh page (page-break-before: always)
+       — never orphaned at the bottom of the prior page. Content within
+       the section CAN break across page boundaries naturally
+       (page-break-inside NOT avoid on .page itself; tables/callouts
+       still keep their own atomicity below). This keeps section
+       openings clean and visually anchored while allowing long
+       sections to spill content naturally. */
+    page-break-before: always;
+    page-break-after: auto;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 0;
+}
+
+/* First content section can flow right after cover; cover keeps standalone */
+.page.cover { page-break-after: always; min-height: 287mm; margin-bottom: 0; }
+.page:last-child { page-break-after: auto; margin-bottom: 0; }
+/* Section opener stays together — heading + eyebrow + first content block.
+   Prevents the heading-orphaned-with-empty-body pattern at page tops. */
+.page > .page-header,
+.page > .section-eyebrow,
+.page > h1.section,
+.page > h1.section-heading {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+/* Prevent orphaned headings / table rows */
+h1, h2, h3 { page-break-after: avoid; break-after: avoid; }
+table, .callout, .chart-wrap, .ask-table, .kpi-strip,
+.pullquote, .channel-bars, .rule-grid, .boundary-table, .kpi {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+tr { page-break-inside: avoid; break-inside: avoid; }
+
+
+/* Red rule at left of content pages. The previous design used
+   margin-left:18mm to indent the page from the document edge — but
+   the page was still 210mm wide, producing a 228mm horizontal
+   footprint that overflowed A4 by 18mm and misaligned content with
+   the cover. Drop margin-left; keep width:210mm. The red rule now
+   sits at the page edge, content pages and cover share the same
+   horizontal extents (0..210mm), and screenshots/exports stay
+   in-page-bounds. padding-left provides the visual breathing room
+   inside the rule. */
+.page:not(.cover) {
+    padding-left: 10mm;
+    padding-right: 16mm;
+}
+
+/* Page header — kept uppercase for runner-style nav (semantic micro-label) */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 7pt;
+    margin-bottom: 18pt;
+    font-size: 7.5pt;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    font-weight: 400;
+}
+.page-header .mark {
+    color: var(--accent);
+    font-weight: 500;
+    font-family: var(--font-display);
+    letter-spacing: 2px;
+}
+
+/* Cycle 26 design rule: page-bottom footer with build-attestation
+   (PILLAR 03 made visible — substrate composes its own evidence). */
+.page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 4pt;
+    margin-top: 8pt;
+    page-break-before: avoid;
+    break-before: avoid;
+    font-family: var(--font-display);
+    font-size: 7.5pt;
+    color: var(--text-dimmer);
+    font-weight: 400;
+}
+.page-footer-brand { color: var(--text-dim); }
+.page-footer-mark { color: var(--accent); font-weight: 500; }
+
+/* Cover — explicit A4 box. width/height/min-height all redundantly
+   set to defeat any Chrome print quirk that previously rendered the
+   cover at ~83%×87% of A4. */
+.cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* padding 18mm top, 22mm sides, 14mm bottom — content was sitting
+       too far above the page edge with the original 24mm symmetric
+       vertical padding (cover-bottom anchored 24mm above page bottom).
+       Tighter bottom padding pulls the running footer line closer to
+       the page edge, gradient extends visibly to the bottom. */
+    padding: 18mm 22mm 14mm 22mm;
+    box-sizing: border-box;
+    width: 210mm;
+    min-width: 210mm;
+    height: 297mm;
+    min-height: 297mm;
+    margin: 0;
+    background:
+        radial-gradient(ellipse at 85% 15%, rgba(167,139,250,0.1), transparent 55%),
+        radial-gradient(ellipse at 15% 85%, rgba(251,191,36,0.06), transparent 55%),
+        #0a0a0a;
+}
+.cover::before { display: none; }
+.cover > * { position: relative; z-index: 1; }
+
+.cover-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-family: var(--font-display); font-size: 9pt;
+    color: var(--text-dimmer); font-weight: 400;
+    /* Cycle 23: was uppercase letterspaced — now editorial top-runner */
+}
+
+.cover-center { display: flex; flex-direction: column; gap: 28pt; }
+
+/* Brand lockup on cover (Cycle 38 — mark + wordmark side-by-side).
+   When both present, render as horizontal lockup (logo + wordmark form
+   single identity unit). Eyebrow runs as separate line below the lockup. */
+.cover-lockup {
+    display: flex; align-items: center; gap: 12pt;
+    margin-bottom: 6pt;
+}
+.cover-mark {
+    width: 44pt; height: 44pt; flex-shrink: 0;
+}
+.cover-mark svg { width: 100%; height: 100%; display: block; }
+.cover-wordmark {
+    font-family: var(--font-brand);
+    font-size: 36pt; line-height: 1; font-weight: 400;
+    letter-spacing: -0.5px; color: var(--text);
+    /* Preserves canonical capitalization (e.g. "mythOS") — no text-transform */
+}
+.cover-wordmark .accent { color: var(--accent); }
+
+.cover-eyebrow {
+    font-family: var(--font-display); font-size: 10pt;
+    letter-spacing: 6px; text-transform: uppercase; color: var(--accent);
+    font-weight: 400;
+}
+
+/* Brand-mark span — preserves canonical capitalization (e.g. mythOS) inside
+   uppercase-styled contexts. Always render brand wordmarks via this class
+   so text-transform/letter-spacing don't break the canon spelling. */
+.brand-mark {
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-family: var(--font-brand, var(--font-display)) !important;
+}
+
+.cover-title {
+    font-family: var(--font-display); font-size: 56pt; line-height: 1.05;
+    letter-spacing: -0.5px; font-weight: 400; color: var(--text);
+    text-wrap: balance;
+    /* No uppercase — cover-eyebrow is the only uppercase on cover (Cycle 23) */
+}
+.cover-title .accent { color: var(--accent); }
+.cover-title .glow { text-shadow: 0 0 30pt rgba(167,139,250,0.45); }
+
+.cover-sub {
+    font-size: 14pt; color: var(--text-dim); font-weight: 300;
+    max-width: 140mm; line-height: 1.4;
+    text-wrap: pretty;
+}
+
+/* Cycle 47: vertical-stacked editorial-block (was 2x2 grid — felt form-y).
+   Each row is a label + value with hairline separator. Reads as masthead
+   credits, not a form to fill out. */
+.cover-meta {
+    display: flex; flex-direction: column;
+    padding-top: 22pt;
+    border-top: 1px solid var(--border-strong); font-size: 10pt;
+}
+.cover-meta > div {
+    display: grid; grid-template-columns: 70mm 1fr;
+    align-items: baseline;
+    padding: 9pt 0;
+    border-bottom: 1px solid var(--border);
+}
+.cover-meta > div:last-child { border-bottom: none; }
+.cover-meta dt {
+    font-family: var(--font-display);
+    color: var(--text-dimmer); font-weight: 400;
+    font-size: 8.5pt; letter-spacing: 1.5px; text-transform: uppercase;
+    /* uppercase here = semantic micro-label (one of the 4 surfaces with
+       intentional uppercase per Cycle 23 policy) */
+}
+.cover-meta dd { color: var(--text); font-weight: 400; font-size: 11pt; }
+
+.cover-bottom {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: var(--font-display); font-size: 9pt;
+    color: var(--text-dimmer);
+    /* Cycle 23: was uppercase letterspaced — now editorial footer-runner */
+}
+
+/* Section headings — Cycle 23: sentence case (was uppercase tier #2)
+   Cycle 29: text-wrap: balance prevents orphan/widow lines (Chrome 114+,
+   Safari 17.5+, Firefox 121+ — all printers shipping today). */
+h1.section {
+    font-family: var(--font-display); font-size: 20pt;
+    font-weight: 500; line-height: 1.15; letter-spacing: -0.3px;
+    margin-bottom: 8pt; color: var(--text);
+    text-wrap: balance;
+}
+h1.section .accent { color: var(--accent); font-weight: 400; }
+
+.section-eyebrow {
+    font-family: var(--font-display); font-size: 8pt;
+    letter-spacing: 5px; text-transform: uppercase; color: var(--accent);
+    font-weight: 400; margin-bottom: 6pt;
+}
+
+h2.sub {
+    font-family: var(--font-display); font-size: 12pt; font-weight: 500;
+    /* margin-top + padding-top combo: margin collapses with previous
+       block's margin-bottom in normal flow (no double-counting),
+       padding survives the page-break overflow case (where margin
+       collapses to 0 because heading lands at top of a fresh page).
+       Larger padding-top (14pt) ensures meaningful breathing room
+       on overflow pages without inflating normal-flow spacing too
+       much (margin-bottom of preceding block dominates the merge). */
+    margin-top: 4pt;
+    padding-top: 14pt;
+    margin-bottom: 6pt;
+    color: var(--text);
+    letter-spacing: -0.2px;
+    text-wrap: balance;
+}
+
+h3.mini {
+    font-family: var(--font-display); font-size: 12.5pt; font-weight: 600;
+    color: var(--text); font-style: normal;
+    margin: 0 0 8pt; padding-bottom: 6pt;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.25; letter-spacing: -0.2px;
+}
+/* Pillar-style cards: lead identifier (PILLAR 01) becomes a small accent
+   eyebrow above the heading body so the headline lands as a sentence
+   instead of a label. Wraps "PILLAR NN · " automatically via .col-card-eyebrow. */
+.col-card .col-card-eyebrow {
+    display: block;
+    font-size: 7.5pt; letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+    margin-bottom: 4pt;
+}
+.col-card .col-card-eyebrow + .col-card-headline {
+    display: block; color: var(--text); font-weight: 600;
+    font-size: 13pt; line-height: 1.2; letter-spacing: -0.2px;
+}
+
+p { margin-bottom: 6pt; color: var(--text-dim); font-weight: 400; text-wrap: pretty; }
+p.lede {
+    color: var(--text); font-size: 11.5pt; font-weight: 400;
+    line-height: 1.45; margin-bottom: 9pt;
+    text-wrap: pretty;
+}
+/* Tighter table cells for content-dense pages */
+table td, table th { padding: 5pt 8pt; font-size: 9.5pt; line-height: 1.4; }
+/* Tighter section heading margin so more body fits per page */
+h1.section { margin-bottom: 12pt; }
+h2.sub { margin-top: 12pt; margin-bottom: 6pt; }
+/* Emotional/editorial emphasis — strong = gravity, em = voice. Both
+   tightened so emphasis lands instead of slumping into body color. */
+p em, li em, td em { font-style: italic; color: var(--text); font-weight: 400; }
+p strong em, p em strong { color: var(--accent); font-style: italic; font-weight: 500; }
+/* Drop cap on the FIRST lede paragraph in each section (editorial-brief convention) */
+.section-eyebrow + h1.section + p.lede::first-letter,
+h1.section + p.lede::first-letter {
+    font-family: var(--font-display); font-size: 38pt;
+    float: left; line-height: 0.9; padding: 4pt 8pt 0 0;
+    color: var(--accent); font-weight: 400;
+}
+p strong, .white, td strong, li strong { color: var(--text); font-weight: 600; }
+
+/* KPI strip — Cycle 23: editorial-data-block style, not startup-deck-hero-card.
+   Hairline rules between items, no card backgrounds, sentence-case labels,
+   data-font (Monaspace Radon) for numbers per brief-format three-voice cast. */
+.kpi-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin: 14pt 0 16pt;
+    border-top: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+}
+.kpi {
+    padding: 12pt 16pt;
+    border-right: 1px solid var(--border);
+}
+.kpi:first-child { padding-left: 0; }
+.kpi:last-child { padding-right: 0; border-right: none; }
+.kpi-label {
+    font-size: 8pt; color: var(--text-dim);
+    margin-bottom: 6pt; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.2px;
+}
+.kpi-value {
+    font-family: 'Monaspace Radon', 'Monaspace Argon', var(--font-display);
+    font-size: 26pt; color: var(--text); font-weight: 500; line-height: 1;
+    letter-spacing: -0.8px;
+}
+.kpi-value.accent { color: var(--accent); }
+.kpi-sub {
+    font-size: 8.5pt; color: var(--text-dimmer);
+    margin-top: 7pt; font-weight: 400; line-height: 1.45;
+}
+
+/* Tables — Cycle 23: editorial style, sentence-case headers, refined leading */
+table {
+    width: 100%; border-collapse: collapse;
+    margin: 12pt 0 14pt; font-size: 10pt;
+}
+thead th {
+    text-align: left; font-family: var(--font-display);
+    font-size: 9.5pt; color: var(--text); padding: 8pt 10pt 8pt 0;
+    border-bottom: 1px solid var(--border-strong); font-weight: 500;
+    /* Cycle 23: was uppercase letterspaced — now sentence case display font */
+}
+thead th.num, td.num { text-align: right; }
+tbody td {
+    padding: 7pt 8pt 7pt 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim); font-weight: 400;
+    line-height: 1.5;
+}
+/* Cycle 26 design rule: subtle zebra-stripe for dense-table legibility */
+tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.015);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody td .white { color: var(--text); font-weight: 500; }
+tbody tr.total td {
+    color: var(--text); font-weight: 600;
+    border-top: 1px solid var(--border-strong);
+    border-bottom: none; padding-top: 7pt;
+}
+tbody tr.total td.num {
+    color: var(--accent); font-size: 10.5pt;
+    font-family: var(--font-display);
+}
+tbody tr.highlight td {
+    background: var(--accent-dim); color: var(--text);
+}
+tbody tr.highlight td.num { color: var(--accent); font-weight: 600; }
+
+/* Callout — Cycle 23: editorial sidebar style, sentence-case title, no card chrome */
+.callout {
+    border-left: 2px solid var(--accent);
+    /* padding-top:14pt survives page-break overflow (where margin-top
+       would collapse to 0 because the callout lands at the top of a
+       fresh print page); margin-top handles normal-flow inter-block
+       spacing via collapse with preceding margin-bottom. */
+    padding: 14pt 0 4pt 14pt;
+    margin: 6pt 0 10pt 0;
+}
+.callout .title {
+    font-family: var(--font-display); font-size: 11pt;
+    color: var(--accent); margin-bottom: 5pt; font-weight: 500;
+    /* Cycle 23: was uppercase letterspaced "DECK CALLOUT" — now editorial sidebar heading */
+}
+.callout p {
+    margin-bottom: 0; color: var(--text); font-weight: 400;
+    font-size: 9.5pt; line-height: 1.45;
+}
+.callout p + p { margin-top: 6pt; }
+
+/* Pullquote — Cycle 23: editorial-grade, sentence case, larger, more breathing room */
+.pullquote {
+    font-family: var(--font-display); font-size: 18pt;
+    font-weight: 400; line-height: 1.35; letter-spacing: -0.3px;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+    padding: 6pt 0 6pt 16pt; margin: 18pt 0; max-width: 90%;
+    text-wrap: balance;
+    /* Cycle 23: was uppercase 14pt — now sentence case 18pt for proclaim-not-shout
+       Cycle 29: text-wrap: balance prevents widow/orphan lines */
+}
+.pullquote.small { font-size: 14pt; }
+.pullquote .em { color: var(--accent); font-style: italic; }
+
+/* Emotional inflection (Cycle 39 — italic body emphasis paired with accent
+   color when used in regular prose; subtle .feeling class for tonal shifts). */
+p .em, p.lede .em, .callout .em {
+    font-style: italic; color: var(--accent); font-weight: 500;
+}
+.feeling {
+    font-style: italic; color: var(--text);
+}
+
+/* Channel bars */
+.channel-bars { display: flex; flex-direction: column; gap: 5pt; margin: 6pt 0; }
+.channel-bar {
+    display: grid; grid-template-columns: 55mm 1fr 18mm;
+    gap: 8pt; align-items: center; font-size: 8.5pt;
+}
+.channel-name { color: var(--text-dim); font-weight: 400; }
+.channel-name.dim { color: var(--text-dimmer); }
+.channel-track {
+    height: 10pt; background: var(--bg-panel);
+    border: 1px solid var(--border); position: relative; overflow: hidden;
+}
+.channel-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, rgba(167,139,250,0.7) 100%);
+}
+.channel-fill.dim {
+    background: var(--text-dimmer);
+}
+.channel-pct {
+    text-align: right; color: var(--text);
+    font-weight: 500; font-size: 8.5pt;
+}
+.channel-pct.dim { color: var(--text-dimmer); }
+
+/* Chart */
+.chart-wrap {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    padding: 10pt 12pt; margin: 8pt 0; border-radius: 2pt;
+}
+.chart-title {
+    font-family: var(--font-display); font-size: 10pt;
+    color: var(--text-dim); margin-bottom: 6pt; font-weight: 500;
+    /* Cycle 23: was uppercase letterspaced — now sentence case display */
+}
+.chart-legend {
+    display: flex; gap: 14pt; margin-top: 5pt;
+    font-size: 7.5pt; color: var(--text-dim); justify-content: center;
+    flex-wrap: wrap;
+}
+.legend-dot {
+    display: inline-block; width: 8pt; height: 8pt;
+    border-radius: 50%; vertical-align: middle; margin-right: 4pt;
+}
+
+/* Loom media image */
+.media-image {
+    margin: 10pt 0 12pt;
+    break-inside: avoid;
+}
+.media-image-frame {
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    border-radius: 3pt;
+    overflow: hidden;
+}
+.media-image.frame-plain .media-image-frame {
+    border: none;
+    background: transparent;
+}
+.media-image.frame-bleed {
+    margin-left: -10mm;
+    margin-right: -16mm;
+}
+.media-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.media-image-placeholder {
+    min-height: 72mm;
+    display: grid;
+    place-items: center;
+    padding: 14pt;
+    color: var(--text-dim);
+    font-size: 8.5pt;
+    text-align: center;
+}
+.media-image-caption {
+    margin-top: 5pt;
+    color: var(--text-dim);
+    font-size: 8pt;
+    line-height: 1.35;
+}
+.media-image-receipt {
+    display: block;
+    margin-top: 3pt;
+    color: var(--text-dimmer);
+    font-size: 7pt;
+    font-family: var(--font-display);
+}
+
+/* Ask table */
+.ask-table {
+    background: var(--bg-panel); border: 1px solid var(--border-strong);
+    padding: 0; margin: 10pt 0; border-radius: 2pt; overflow: hidden;
+}
+.ask-row {
+    display: grid; grid-template-columns: 14mm 1fr auto;
+    grid-column-gap: 10pt;
+    padding: 10pt 14pt; border-bottom: 1px solid var(--border);
+    align-items: center;
+}
+.ask-row:last-child { border-bottom: none; }
+.ask-num {
+    font-family: var(--font-display); font-size: 20pt;
+    color: var(--accent); font-weight: 400; line-height: 1;
+}
+.ask-label { color: var(--text); font-size: 10pt; font-weight: 400; }
+.ask-label .dim {
+    color: var(--text-dimmer); display: block;
+    font-size: 8pt; margin-top: 2pt; font-weight: 300; line-height: 1.35;
+}
+.ask-pill {
+    justify-self: end; font-family: var(--font-display);
+    font-size: 7.5pt; color: var(--accent); font-weight: 500;
+    /* Cycle 34: editorial pill — accent-tinted bg, thin border, capsule
+       rounded corners. */
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    padding: 3pt 9pt;
+    border-radius: 999pt;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 7pt;
+    letter-spacing: 1.5px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* Columns */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9pt; }
+.four-col { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 7pt; }
+
+.col-card {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    padding: 12pt 13pt; border-radius: 3pt;
+    position: relative;
+}
+.col-card ul.bare { font-size: 9pt; line-height: 1.4; }
+.col-card ul.bare li { margin-bottom: 3pt; }
+.col-card.accent {
+    background: var(--accent-dim); border-color: var(--accent);
+}
+.col-card p { color: var(--text); font-size: 9.5pt; line-height: 1.5; }
+
+/* Pillar variant — distinct treatment from default col-card. Top-stripe
+   accent + accent-colored eyebrow so pillar columns read as labeled
+   claims. Default .col-card (founders) has NO accent stroke — recovers
+   horizontal text width per creator's May 23 evening direction. */
+.col-card.pillar {
+    border-top: 2pt solid var(--accent);
+    padding-top: 11pt;
+}
+.col-card.pillar .col-card-eyebrow {
+    color: var(--accent);
+    letter-spacing: 0.08em;
+}
+
+.note {
+    font-size: 7.5pt; color: var(--text-dimmer);
+    font-style: italic; margin-top: 6pt; font-weight: 300; line-height: 1.4;
+}
+
+/* Status pills — semantic color coding (success/warning/error/info)
+   Use inline as <span class="status status-success">live</span> in table
+   cells. Each color has ONE meaning per design canon. */
+.status {
+    display: inline-block;
+    font-size: 7.5pt; font-weight: 600;
+    padding: 2pt 7pt; border-radius: 999pt;
+    letter-spacing: 0.6px; text-transform: uppercase;
+    line-height: 1.3; white-space: nowrap;
+}
+.status-success { color: var(--status-success); background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); }
+.status-warning { color: var(--status-warning); background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.3); }
+.status-error   { color: var(--status-error);   background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); }
+.status-info    { color: var(--status-info);    background: rgba(96, 165, 250, 0.12); border: 1px solid rgba(96, 165, 250, 0.3); }
+
+ul { font-size: 9pt; }
+ul.bare { list-style: none; padding: 0; color: var(--text-dim); font-weight: 300; }
+ul.bare li { padding: 4pt 0; border-bottom: 1px solid var(--border); }
+ul.bare li:last-child { border-bottom: none; }
+
+.confidentiality {
+    text-align: center; font-size: 8pt; letter-spacing: 4px;
+    text-transform: uppercase; color: var(--text-dimmer); margin-top: 20pt;
+}
+
+
+</style>
+</head>
+<body>
+<section class="page cover">
+  <div class="cover-top">
+    <span>Jack Polo — creator of O.M.G. and S.O.S. · CEO, StarHub Studios</span>
+    <span>September 2026</span>
+  </div>
+  <div class="cover-center">
+    <div class="cover-lockup">
+      <div class="cover-wordmark">StarHub Studios</div>
+    </div>
+    <div class="cover-eyebrow">Wonderstorm Academy · Curriculum explainer</div>
+    <h1 class="cover-title">Two things every other school <span class="accent">teaches by accident.</span></h1>
+    <p class="cover-sub">How a child thinks, and how a child reads a room. O.M.G. trains the first. S.O.S. trains the second. Both are built into the Wonderstorm platform today. This document explains what they are, how they work, why they work, and how I designed them.</p>
+    <dl class="cover-meta">
+      <div><dt>O.M.G.</dt><dd>Open Minded Goals · Pre-K to 12th · 1,400 cards</dd></div>
+      <div><dt>S.O.S.</dt><dd>Social Operating Skills · 4 parts · 5 levels · 18 skills</dd></div>
+      <div><dt>Where</dt><dd>Leader, Coach and Parent portals · the academy site</dd></div>
+    </dl>
+  </div>
+  <div class="cover-bottom">
+    <span>starhubstudios.com</span>
+    <span class="mark">Confidential</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">00 · The short answer</span>
+  </div>
+  <div class="section-eyebrow">If you read one page</div>
+  <h1 class="section">Academics teach <em>what</em> to think. <span class="accent">These teach how.</span></h1>
+<p class="lede">Every tool Wonderstorm rents — reading, maths, science — is about content. Not one of them touches the two things that decide whether a young person can use that content: the quality of their thinking, and their ability to read and respond to the people around them. O.M.G. and S.O.S. are those two things, made teachable, made daily, and made visible.</p>
+<table>
+<thead><tr>
+<th></th>
+<th>O.M.G. — Open Minded Goals</th>
+<th>S.O.S. — Social Operating Skills</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>Trains</strong></td>
+<td>How a leader processes the world and how they respond to it — cognitive thinking and rational thinking.</td>
+<td>How a leader reads a room, reads themselves, chooses a response, and stays themselves while doing it.</td>
+</tr>
+<tr>
+<td><strong>Shape</strong></td>
+<td>14 levels (Pre-K to 12th) × 2 decks × 50 cards. A daily hand of five.</td>
+<td>1 thesis · 4 parts · a 5-level scale · 18 named skills · the practices that train them.</td>
+</tr>
+<tr>
+<td><strong>Ritual</strong></td>
+<td>Two minutes a day in the Leader portal, at the leader's level.</td>
+<td>Self-evaluation after activities against the five levels; practised by name.</td>
+</tr>
+<tr>
+<td><strong>Evidence</strong></td>
+<td>Every card the leader writes up lands in their portal and the Coach's.</td>
+<td>Levels, 360 feedback and check-ins feed the mastery figure and the Needs Support flag.</td>
+</tr>
+<tr>
+<td><strong>Owned by</strong></td>
+<td>Jack Polo. Licensed to Wonderstorm inside the platform. No vendor, no subscription.</td>
+<td>Jack Polo. Same.</td>
+</tr>
+</tbody></table>
+<div class="callout">
+  <div class="title">◆ The one-line version</div>
+  <p>O.M.G. is the thinking under the academics. S.O.S. is the thinking between people. Together they are the reason a Wonderstorm leader looks different from a child who simply finished their worksheets.</p>
+</div>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">00 · The short answer</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">01 · O.M.G. — what it is</span>
+  </div>
+  <div class="section-eyebrow">Open Minded Goals</div>
+  <h1 class="section">A curriculum for the <span class="accent">mind that does the learning.</span></h1>
+<p class="lede">O.M.G. is a cognitive-thinking and rational-behaviour curriculum that runs from Pre-K to 12th grade. It is not a subject and it is not a supplement bolted onto one. It is a parallel spine: a small daily practice that runs alongside everything else the school teaches, and makes everything else the school teaches land better.</p>
+<p>It is built as cards, on purpose. Fourteen levels, one per grade band from Pre-K to 12th. Each level has two decks of fifty: a <strong>Cognitive Thinking</strong> deck and a <strong>Rational Thinking</strong> deck. One thousand four hundred cards in total, every one written for its age, every one a single thing a young person can do or think through in a few minutes.</p>
+<table>
+<thead><tr>
+<th>Deck</th>
+<th>What it trains</th>
+<th>What a card looks like</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>Cognitive Thinking</strong></td>
+<td>How the mind processes the world: attention, memory, sequencing, patterns, categories, cause and effect, estimation, reasoning under uncertainty. The machinery of thought.</td>
+<td>Pre-K: “Matching Shapes — match similar shapes like squares, circles, triangles.” 3rd grade: “Measurement Conversion — convert between units, inches to feet, litres to millilitres.” 12th: “Understanding Advanced Topics in Mathematical Ethics — investigate ethical issues in mathematics, logic and the philosophy of mathematics.”</td>
+</tr>
+<tr>
+<td><strong>Rational Thinking</strong></td>
+<td>How the mind responds to the world: separating a thought from a feeling from an action, weighing choices, noticing distortions, choosing a more open-minded thought, taking responsibility for the response. The character of thought.</td>
+<td>A situation, a first thought, and a better one — walked through in three steps, then rated: how open was I?</td>
+</tr>
+</tbody></table>
+<p class="note">The name is the method. <em>Open Minded Goals</em>: a goal is set, the mind is opened to more than its first reaction, and the leader chooses. The word “Open” is doing the work — it is the opposite of the rigid, automatic thinking that cognitive science has identified as the root of most poor decisions at every age.</p>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">01 · O.M.G. — what it is</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">02 · O.M.G. — how it works</span>
+  </div>
+  <div class="section-eyebrow">The daily hand</div>
+  <h1 class="section">Five cards. Two minutes. <span class="accent">Every day.</span></h1>
+<p class="lede">In the Leader portal, O.M.G. is a programme next to reading, maths, science and puzzles. The leader is placed at their level automatically from their grade — a Coach can move them — and chooses a deck. Then they draw.</p>
+<table>
+<thead><tr>
+<th>Step</th>
+<th>What happens</th>
+<th>Why it is built this way</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>1 · Draw a hand</strong></td>
+<td>Five cards from the leader's level and deck, dealt so no card repeats across recent hands.</td>
+<td>Small enough to finish. Random enough that the mind cannot coast.</td>
+</tr>
+<tr>
+<td><strong>2 · Cognitive cards — do it</strong></td>
+<td>The leader tries the card for real, with things around them or in their head, then checks in: done, partly, or not yet, and writes one line: what did I notice?</td>
+<td>The check-in is honest by design. There is no wrong answer to “what did I notice” — only the habit of noticing.</td>
+</tr>
+<tr>
+<td><strong>3 · Rational cards — think it through</strong></td>
+<td>Three lines: the situation · my first thought · a more open-minded thought. Then a 1-to-5: how open was I?</td>
+<td>This is the cognitive-behavioural move — thought before action — made into a form a nine-year-old can complete and a seventeen-year-old still respects.</td>
+</tr>
+<tr>
+<td><strong>4 · Hand summary</strong></td>
+<td>How many of the five they wrote up, the lines they wrote, XP earned, and a note to their Coach if they want one.</td>
+<td>Completion is self-reported and never marked right or wrong. What counts is that the thinking happened and was written down.</td>
+</tr>
+<tr>
+<td><strong>5 · It lands</strong></td>
+<td>Every hand writes into Today's Plan, the Progress page, and the Coach's view. Twenty hands complete a level.</td>
+<td>Nothing is filed away. The Coach sees who is thinking and who is stuck, without standing over anyone.</td>
+</tr>
+</tbody></table>
+<div class="callout">
+  <div class="title">◆ What “stuck” means here</div>
+  <p>If a leader completes fewer than three of five cards three hands in a row, the programme flags it to the Coach. Not as a failure — as a signal that the level, the deck, or the day needs a conversation.</p>
+</div>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">02 · O.M.G. — how it works</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">03 · O.M.G. — how it was designed</span>
+  </div>
+  <div class="section-eyebrow">The approach — in Jack's words</div>
+  <h1 class="section">I did not start with children. <span class="accent">I started with the thinking.</span></h1>
+<p class="lede">O.M.G. grew out of cognitive-thinking work I have been building since 2019: an adult programme, run one-to-one with a life coach, built on a single premise — that most of what goes wrong in a life goes wrong in the thinking first, and that thinking can be trained like anything else. The standards of that programme are still the standards of O.M.G.: openness, honesty, trust, support, and looking honestly at your own role in your own problems instead of blaming them on other people or things.</p>
+<p>The science underneath it is not mine and I do not pretend it is. It is the cognitive-behavioural tradition: Aaron Beck's work on cognitive distortions — the automatic, rigid patterns like “should” statements that turn ordinary situations into frustration and resentment — and Albert Ellis's rational-emotive work on replacing rigid demands with flexible preferences. The move is always the same: notice the thought, test it, choose a better one, then act. What I did was ask a question I had not seen answered: <em>what would this look like if you started at four years old instead of forty?</em></p>
+<table>
+<thead><tr>
+<th>Design principle</th>
+<th>What it means in practice</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>Two decks, not one</strong></td>
+<td>Processing and responding are different skills. A child can be quick and still react badly; a child can be kind and still muddled. Cognitive cards train the machinery. Rational cards train the character. Both, every level, every year.</td>
+</tr>
+<tr>
+<td><strong>Fourteen levels, one per year</strong></td>
+<td>The same idea grows with the child. Pre-K matches shapes and names a feeling; 12th grade weighs the ethics of a mathematical argument. Nobody ages out and nobody is talked down to.</td>
+</tr>
+<tr>
+<td><strong>Cards, not chapters</strong></td>
+<td>A card is one thing. It can be done in minutes, shuffled, drawn again, carried in a pocket, played with a parent. A chapter cannot. Repetition builds mastery; cards make repetition painless.</td>
+</tr>
+<tr>
+<td><strong>No “bad” feelings, no wrong answers</strong></td>
+<td>From the Pre-K companion guide onward: feelings are named, never labelled bad; a thought can be popped and replaced; a choice is evaluated, not the child. Self-report, not marks, because the honesty is the skill.</td>
+</tr>
+<tr>
+<td><strong>Agency is the goal</strong></td>
+<td>The youngest level ends with “I am the boss of me.” The oldest ends with questions of ethics and responsibility. The whole arc is a child taking ownership of their own mind.</td>
+</tr>
+<tr>
+<td><strong>Six focus areas throughout</strong></td>
+<td>Emotional awareness · rational thinking · leadership mindset · entrepreneurial foundations · self-identity and integrity · cognitive-behaviour tools. Every level carries all six at its own altitude.</td>
+</tr>
+</tbody></table>
+<p class="note">Jack — this section is your story, told back to you from your own documents. Read it before it goes to David and change anything that is not how you would say it.</p>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">03 · O.M.G. — how it was designed</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">04 · O.M.G. — what Wonderstorm gains</span>
+  </div>
+  <div class="section-eyebrow">The benefits</div>
+  <h1 class="section">The spine <span class="accent">nothing else in the building has.</span></h1>
+<table>
+<thead><tr>
+<th>For</th>
+<th>What changes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>The leader</strong></td>
+<td>A daily two-minute practice that trains thinking itself. Better attention, cleaner reasoning, and the habit of pausing between a thought and an action — which is the skill every other skill depends on.</td>
+</tr>
+<tr>
+<td><strong>The Coach</strong></td>
+<td>Evidence of how a child is thinking, not just what they scored. The stuck flag, the written lines, and the note-to-coach turn “needs support” from a hunch into something you can point at.</td>
+</tr>
+<tr>
+<td><strong>The parent</strong></td>
+<td>A window into their child's mind in the child's own words, in the Parent portal. Something to talk about at dinner that is not a grade.</td>
+</tr>
+<tr>
+<td><strong>The school</strong></td>
+<td>A curriculum no competitor has, owned rather than rented, running inside a platform the school also owns. It is the answer to “what makes Wonderstorm different” that a parent can see on a Tuesday.</td>
+</tr>
+<tr>
+<td><strong>The academics</strong></td>
+<td>Every reading passage, maths lesson and science check in the platform lands on a mind that has been trained to notice, test and choose. O.M.G. is why the other four programmes work better here than anywhere else.</td>
+</tr>
+</tbody></table>
+<div class="callout">
+  <div class="title">◆ What it is not</div>
+  <p>It is not therapy, it is not a behaviour-management scheme, and it is not a test. It is a practice. The same way a musician runs scales before the music, a leader runs a hand of O.M.G. before the day.</p>
+</div>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">04 · O.M.G. — what Wonderstorm gains</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">05 · S.O.S. — what it is</span>
+  </div>
+  <div class="section-eyebrow">Social Operating Skills</div>
+  <h1 class="section">Most children are taught “be yourself.” <span class="accent">S.O.S. teaches them to read the room.</span></h1>
+<p class="lede">S.O.S. is a complete operating system for how a young person moves through other people. Not a worksheet, not a unit: a thesis, four teachable parts, a five-level scale, eighteen named skills, and the activities that practise them. Its core instrument is <strong>Social Calibration</strong>.</p>
+<p>The thesis is the reason it exists. “Be yourself” is the standard advice and it is useless in the moment a child is misreading a room, because it tells them the problem is who they are rather than what they are noticing. S.O.S. replaces identity advice with a skill: <em>adjust the delivery, never the person.</em> A child who cannot read a room is sending one.</p>
+<table>
+<thead><tr>
+<th>The four parts</th>
+<th>The question the leader learns to ask</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>01 · Reading the Room</strong></td>
+<td>Can I notice the emotions, the energy, who is engaged, who feels left out, when tension is rising, when humour lands? Observers before speakers.</td>
+</tr>
+<tr>
+<td><strong>02 · Reading Yourself</strong></td>
+<td>Can I recognise my own emotion, tone, body language, how much space I am taking up, how my actions affect others? Leadership begins with self-awareness.</td>
+</tr>
+<tr>
+<td><strong>03 · Choosing an Intentional Response</strong></td>
+<td>What is needed here? What outcome do I want? What would a great leader do? This is where emotional regulation becomes leadership.</td>
+</tr>
+<tr>
+<td><strong>04 · Staying Authentic</strong></td>
+<td>Am I adjusting my delivery without abandoning my identity? Like the volume on a speaker: the music stays the same, the volume changes with the room.</td>
+</tr>
+</tbody></table>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">05 · S.O.S. — what it is</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">06 · S.O.S. — how it works</span>
+  </div>
+  <div class="section-eyebrow">The five levels and the eighteen skills</div>
+  <h1 class="section">A child is never “bad at people.” <span class="accent">They are at a 2 today, and they can name what a 3 looks like.</span></h1>
+<table>
+<thead><tr>
+<th>Level</th>
+<th>What the leader says about themselves</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>1 · Unaware</strong></td>
+<td>“I didn't notice anyone else.”</td>
+</tr>
+<tr>
+<td><strong>2 · Noticing</strong></td>
+<td>“I noticed others, but reacted automatically.”</td>
+</tr>
+<tr>
+<td><strong>3 · Adjusting</strong></td>
+<td>“I recognised what was happening and made a better choice.”</td>
+</tr>
+<tr>
+<td><strong>4 · Intentional</strong></td>
+<td>“I helped improve the group dynamic.”</td>
+</tr>
+<tr>
+<td><strong>5 · Leadership</strong></td>
+<td>“I noticed what others needed before they did, and positively influenced the culture.”</td>
+</tr>
+</tbody></table>
+<p>Leaders evaluate themselves after activities against this scale. That single design choice shifts the whole conversation from judgement to growth: there is always a next rung, and the child can say it in their own words. Eighteen skills are practised by name: active listening · eye contact · voice volume · reading facial expressions · personal space · body language · asking questions · timing · humour · conflict resolution · giving feedback · receiving feedback · welcoming new people · including others · navigating disagreements · public speaking · group conversations · one-on-one conversations.</p>
+<table>
+<thead><tr>
+<th>The instruments around it</th>
+<th>How it works</th>
+<th>Why it is necessary</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>I Master Me</strong></td>
+<td>A named state-shift protocol: Frustrated → Balanced, Overwhelmed → Centered, Anxious → Grounded, Angry → Composed, each with the specific move that gets there.</td>
+<td>A dysregulated child cannot access a single thing the school teaches. This gives them a tool with a name they can reach for alone.</td>
+</tr>
+<tr>
+<td><strong>The 3 B's</strong></td>
+<td>Brain, Buddy, Book: what do I already know, who around me can help, where is this written down?</td>
+<td>Three seconds of self-reliance before dependence. It replaces “ask the teacher” as the reflex.</td>
+</tr>
+<tr>
+<td><strong>The 10/10 Rule</strong></td>
+<td>The leader rates their own work, then states what a 10 would have looked like and what would move it there.</td>
+<td>Self-assessment with teeth. A child who scores their own 6 as a 9 is a coaching signal you would otherwise never see.</td>
+</tr>
+<tr>
+<td><strong>The Check-In</strong></td>
+<td>Ten standing questions per session: proudest moment, the struggle, why, what would help, what changes next time, who they guided and who guided them.</td>
+<td>Same ten questions every time is what makes eight weeks comparable. That is where the trend lines come from.</td>
+</tr>
+<tr>
+<td><strong>360° Feedback</strong></td>
+<td>Five axes from peers and coaches: Taker↔Giver, Tough-minded↔Warm-hearted, Disagreeable↔Agreeable, Talks-over↔Active-listener, Waits↔Takes-initiative.</td>
+<td>Character is the one thing a child cannot self-report accurately. The 360 is the only place the group's read enters the record.</td>
+</tr>
+</tbody></table>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">06 · S.O.S. — how it works</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">07 · S.O.S. — how it was designed</span>
+  </div>
+  <div class="section-eyebrow">The approach — in Jack's words</div>
+  <h1 class="section">The volume, <span class="accent">not the music.</span></h1>
+<p class="lede">S.O.S. came from watching what actually separates the young people who thrive from the ones who struggle, and noticing it was almost never intelligence. It was calibration: whether they could feel the room and adjust without losing themselves. Nobody was teaching it, because everyone assumed it could not be taught. So I broke it into parts that can.</p>
+<table>
+<thead><tr>
+<th>Design principle</th>
+<th>What it means in practice</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>Skill, not identity</strong></td>
+<td>The whole system refuses the sentence “that's just how I am.” Reading a room is a skill with parts; parts can be practised; practice can be observed. The child is never the problem — the noticing is.</td>
+</tr>
+<tr>
+<td><strong>A scale, not a verdict</strong></td>
+<td>Five levels with the child's own sentence at each one. Self-placed, not assigned. It gives every leader a next rung instead of a label, and it gives the Coach a common language for the whole lab.</td>
+</tr>
+<tr>
+<td><strong>Eighteen names</strong></td>
+<td>“Good with people” is not teachable. Eye contact, timing, receiving feedback, including others — those are. Naming them is what makes them practisable on a Tuesday and observable by a Coach.</td>
+</tr>
+<tr>
+<td><strong>Regulation first</strong></td>
+<td>I Master Me sits underneath everything, because a child in a flooded state cannot calibrate anything. The tool has a name so they can reach for it alone, and it is logged so regulation becomes visible progress.</td>
+</tr>
+<tr>
+<td><strong>The group's read enters the record</strong></td>
+<td>Self-report is where honesty is trained; the 360 is where reality checks it. Character is the one thing nobody can grade themselves on, so peers and coaches hold that mirror.</td>
+</tr>
+<tr>
+<td><strong>Authenticity is a part, not an afterthought</strong></td>
+<td>Part four exists so that calibration never becomes people-pleasing. The speaker analogy is the whole ethic: change the volume, never the song.</td>
+</tr>
+</tbody></table>
+<p class="note">Jack — same as section 03: this is your reasoning in your voice, reconstructed from what you have said and built. Correct anything before it reaches David.</p>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">07 · S.O.S. — how it was designed</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">08 · S.O.S. — what Wonderstorm gains</span>
+  </div>
+  <div class="section-eyebrow">The benefits</div>
+  <h1 class="section">The one thing parents cannot get <span class="accent">anywhere else.</span></h1>
+<table>
+<thead><tr>
+<th>For</th>
+<th>What changes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>The leader</strong></td>
+<td>A vocabulary for the hardest part of growing up, and a way to get better at it on purpose. Fewer conflicts, more friends, and the quiet confidence of a child who knows they can read a room.</td>
+</tr>
+<tr>
+<td><strong>The Coach</strong></td>
+<td>The whole lab's distribution across the five levels on one screen, the 360 read, and the Needs Support flag. Who is thriving and who is struggling socially, without guessing.</td>
+</tr>
+<tr>
+<td><strong>The parent</strong></td>
+<td>A Social Calibration figure they can watch move, and a child who comes home with language for what happened at lunch.</td>
+</tr>
+<tr>
+<td><strong>The school</strong></td>
+<td>Wonderstorm sells leadership. S.O.S. is the proof: a system with parts, levels and names that a visiting parent can be shown in ten minutes. It turns a promise into a curriculum.</td>
+</tr>
+</tbody></table>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">08 · S.O.S. — what Wonderstorm gains</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">09 · Together, and where they live</span>
+  </div>
+  <div class="section-eyebrow">One system, three surfaces</div>
+  <h1 class="section">O.M.G. is the thinking inside a leader. <span class="accent">S.O.S. is the thinking between leaders.</span></h1>
+<p class="lede">They are built to be used together. A Rational Thinking card in O.M.G. asks a leader to choose a more open-minded thought about a situation; S.O.S. is what they use when that situation has other people in it. I Master Me regulates the state; O.M.G. trains the thought; Social Calibration shapes the response. The instruments are shared, the evidence flows into one place, and the Coach sees one child, not three programmes.</p>
+<table>
+<thead><tr>
+<th>Where</th>
+<th>O.M.G.</th>
+<th>S.O.S.</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>Academy site</strong></td>
+<td>Named on the Platform page as the fifth programme.</td>
+<td>Its own page, S.O.S., in the main menu.</td>
+</tr>
+<tr>
+<td><strong>Leader portal</strong></td>
+<td>Programs → O.M.G.: the daily hand, My cards, level and deck.</td>
+<td>Calibration, I Master Me and Check-In tabs. Feeds mastery.</td>
+</tr>
+<tr>
+<td><strong>Coach portal</strong></td>
+<td>Programmes column and set-by-hand; hands and stuck flags per leader.</td>
+<td>360 & Calibration tab: the whole lab across five levels.</td>
+</tr>
+<tr>
+<td><strong>Parent portal</strong></td>
+<td>Progress in the child's own words.</td>
+<td>The Social Calibration figure and what it means.</td>
+</tr>
+</tbody></table>
+<div class="callout">
+  <div class="title">◆ On ownership, plainly</div>
+  <p>Both curricula are mine. Not one Acton word, not one Acton tool, nothing borrowed from any vendor. They are licensed to Wonderstorm inside the platform, which is why Wonderstorm can own them rather than rent them — and why no other school will have them unless we decide together that one should.</p>
+</div>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">09 · Together, and where they live</span>
+  </div>
+</section>
+
+<section class="page">
+  <div class="page-header">
+    <span>section</span>
+    <span class="mark">10 · What David decides</span>
+  </div>
+  <div class="section-eyebrow">The close</div>
+  <h1 class="section">Not whether. <span class="accent">When, and where in the week.</span></h1>
+<table>
+<thead><tr>
+<th>Decision</th>
+<th>What it means</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><strong>The O.M.G. slot</strong></td>
+<td>Which labs start first, and where the daily hand sits: a two-minute ritual at Morning Circle, or one longer block in the week. The programme is built and running; this is scheduling.</td>
+</tr>
+<tr>
+<td><strong>Side by side</strong></td>
+<td>Run O.M.G. and S.O.S. alongside everything else for one cycle. The Coach view will show you what changed. Then decide what stays.</td>
+</tr>
+<tr>
+<td><strong>The four academic programmes</strong></td>
+<td>Reading, maths, science and puzzles now run in the same portal, on the same tracker. Your word to run them next to the rented tools for one cycle before cancelling anything.</td>
+</tr>
+</tbody></table>
+<p class="lede">Everything in this document exists today, on the preview, at the passcode you already have. Nothing here is a plan. It is built, and it is waiting for a start date.</p>
+  <div class="page-footer">
+    <span class="page-footer-brand"><span class="brand-mark">mythOS</span> · loom</span>
+    <span class="page-footer-mark">10 · What David decides</span>
+  </div>
+</section>
+</body>
+</html>
