@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Begin — Passionate Wisdom Leaders</title><meta name="description" content="Executive coaching for leaders who have done the proving and are ready for the giving. Heidi Katara Funk, 30 years with Fortune 500 leaders."/><meta name="robots" content="noindex"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/></head><body>
+<div class="ribbon">SKELETON · built for Heidi Katara Funk by The Branding Guru · not live · <a href="plan.html">the game plan →</a></div>
+<nav class="top"><div class="wrap nav-in">
+  <a class="brand" href="index.html"><img src="assets/IconTop1.png" alt=""/><b>Passionate Wisdom Leaders</b></a>
+  <div class="links" id="links"><a href="index.html">Home</a><a href="story.html">The Story</a><a href="roadmap.html">The Roadmap</a><a href="results.html">Results</a><a href="book.html">The Book</a><a href="work.html">Work With Me</a><a class="btn btn-primary" href="begin.html">Begin</a></div>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</div></nav>
+
+<section class="fold"><div class="wrap">
+  <p class="eyebrow rv">Begin</p>
+  <h2 class="crown rv d1">Twenty minutes. Bring the thing you've been circling.</h2>
+  <p class="lede rv d2">Pick a day, pick a time. On the live site this lands on both calendars in one click. No email tennis, no typing.</p>
+  <div class="booking rv d3">
+    <div><p class="eyebrow" style="margin-bottom:.6rem">Pick a day</p><div class="days" id="days"></div></div>
+    <div><p class="eyebrow" style="margin-bottom:.6rem">Pick a time <span class="tiny">(Pacific)</span></p><div class="slots" id="slots"><button class="slot">9:00 am</button><button class="slot">11:30 am</button><button class="slot">2:00 pm</button><button class="slot">4:30 pm</button></div>
+      <input class="field" id="nm" placeholder="Your name"/><input class="field" id="em" placeholder="Your email" type="email"/>
+      <button class="btn btn-primary" id="book" style="margin-top:1rem;width:100%;justify-content:center">Book the call</button>
+    </div>
+  </div>
+  <div class="confirm" id="confirm"><p class="eyebrow">Booked (concept)</p><h3 id="cf-line" style="margin:.4rem 0">You're on the calendar.</h3><p class="tiny">On the live site this sends both invites, a reminder the morning of, and one line from Heidi: "Bring the thing you've been circling."</p></div>
+  <p class="tiny" style="margin-top:1.6rem">Prefer email? <a href="mailto:passionatewisdomleaders@gmail.com?subject=A%2020-minute%20call">passionatewisdomleaders@gmail.com</a></p>
+</div></section>
+<div class="wrap next"><a href="work.html">← Work With Me</a></div>
+
+<footer><div class="wrap">
+  <div class="foot">
+    <img src="assets/Logo_PWL.png" alt="Passionate Wisdom Leaders" style="height:46px;width:auto"/>
+    <div>passionatewisdomleaders@gmail.com · <a href="plan.html">The game plan</a> · © Passionate Wisdom Leaders</div>
+  </div>
+  <a class="mythos" href="https://mythos.vision" target="_blank" rel="noopener">◐ Powered by <b>mythOS</b> · built by The Branding Guru</a>
+</div></footer>
+<script src="site.js"></script><script>
+const days=document.getElementById('days');const d0=new Date();let made=0,dd=new Date(d0);dd.setDate(dd.getDate()+1);
+while(made<8){if(dd.getDay()!==0&&dd.getDay()!==6){const b=document.createElement('button');b.className='day';b.innerHTML=`<small>${dd.toLocaleDateString('en-US',{weekday:'short'})}</small><b>${dd.getDate()}</b><small>${dd.toLocaleDateString('en-US',{month:'short'})}</small>`;b.dataset.label=dd.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});days.appendChild(b);made++}dd.setDate(dd.getDate()+1)}
+let day=null,slot=null;
+days.querySelectorAll('.day').forEach(b=>b.onclick=()=>{days.querySelectorAll('.day').forEach(x=>x.classList.remove('on'));b.classList.add('on');day=b.dataset.label});
+document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{document.querySelectorAll('.slot').forEach(x=>x.classList.remove('on'));b.classList.add('on');slot=b.textContent});
+document.getElementById('book').onclick=()=>{const nm=document.getElementById('nm').value.trim();if(!day||!slot){alert('Pick a day and a time.');return}document.getElementById('cf-line').textContent=`${nm||'You'}: ${day} at ${slot}, with Heidi.`;const c=document.getElementById('confirm');c.classList.add('on');c.scrollIntoView({behavior:'instant',block:'center'})};
+</script>
+</body></html>

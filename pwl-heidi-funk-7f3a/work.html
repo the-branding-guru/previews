@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Work With Me — Passionate Wisdom Leaders</title><meta name="description" content="Executive coaching for leaders who have done the proving and are ready for the giving. Heidi Katara Funk, 30 years with Fortune 500 leaders."/><meta name="robots" content="noindex"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/></head><body>
+<div class="ribbon">SKELETON · built for Heidi Katara Funk by The Branding Guru · not live · <a href="plan.html">the game plan →</a></div>
+<nav class="top"><div class="wrap nav-in">
+  <a class="brand" href="index.html"><img src="assets/IconTop1.png" alt=""/><b>Passionate Wisdom Leaders</b></a>
+  <div class="links" id="links"><a href="index.html">Home</a><a href="story.html">The Story</a><a href="roadmap.html">The Roadmap</a><a href="results.html">Results</a><a href="book.html">The Book</a><a href="work.html">Work With Me</a><a class="btn btn-primary" href="begin.html">Begin</a></div>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</div></nav>
+
+<section class="fold"><div class="wrap">
+  <p class="eyebrow rv">Work with me</p>
+  <h2 class="crown rv d1">One-on-one transformational executive coaching.</h2>
+  <p class="lede rv d2">Three lengths. The price is on the page so the decision is yours, made calmly.</p>
+  <div class="pay-toggle rv d3"><span>Paid in full</span><button class="switch" id="pif" role="switch" aria-checked="false" aria-label="Paid in full"></button><span class="tiny" id="pif-note">Toggle to see the paid-in-full price.</span></div>
+  <div class="tiers rv d3">
+    <div class="tier"><span class="len">Three months</span><div class="price" data-hi="$6,500" data-lo="$5,000">$6,500</div><div class="was"></div><div class="note">The ignition. For a leader with one clear threshold to cross.</div>
+      <ul><li>Pre-work and exploration</li><li>Confidential sessions, twice a month</li><li>Your road map, dated</li><li>Play-work between sessions</li></ul><a class="btn btn-ghost" href="begin.html">Start with a call</a></div>
+    <div class="tier hi"><span class="badge">Most chosen</span><span class="len">Six months</span><div class="price" data-hi="$13,000" data-lo="$10,000">$13,000</div><div class="was"></div><div class="note">The transformation.</div>
+      <ul><li>Everything in three months</li><li>Assessments or live 360 interviews</li><li>Stakeholder meetings as needed</li><li>A road map you keep refining</li></ul><a class="btn btn-primary" href="begin.html">Start with a call</a></div>
+    <div class="tier"><span class="len">Twelve months</span><div class="price" data-hi="$25,000" data-lo="$20,000">$25,000</div><div class="was"></div><div class="note">The legacy. You, and the team you lead.</div>
+      <ul><li>Everything in six months</li><li>Team coaching included</li><li>Your team's own road map</li><li>Results that outlive the engagement</li></ul><a class="btn btn-ghost" href="begin.html">Start with a call</a></div>
+  </div>
+  <div class="door rv d4">
+    <div><h3>The free door has one name: a 20-minute call.</h3><p>Not a free session. A conversation to see if we fit. If we do, you will already know the price.</p></div>
+    <a class="btn" href="begin.html">Book the call</a>
+  </div>
+</div></section>
+<div class="wrap next"><a href="book.html">← The Book</a><a class="btn btn-ghost" href="begin.html">Begin →</a></div>
+
+<footer><div class="wrap">
+  <div class="foot">
+    <img src="assets/Logo_PWL.png" alt="Passionate Wisdom Leaders" style="height:46px;width:auto"/>
+    <div>passionatewisdomleaders@gmail.com · <a href="plan.html">The game plan</a> · © Passionate Wisdom Leaders</div>
+  </div>
+  <a class="mythos" href="https://mythos.vision" target="_blank" rel="noopener">◐ Powered by <b>mythOS</b> · built by The Branding Guru</a>
+</div></footer>
+<script src="site.js"></script><script>
+const sw=document.getElementById('pif'),note=document.getElementById('pif-note');
+sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-checked',on);note.textContent=on?'Paid-in-full price shown.':'Toggle to see the paid-in-full price.';document.querySelectorAll('.tier').forEach(t=>{const p=t.querySelector('.price'),w=t.querySelector('.was');p.textContent=on?p.dataset.lo:p.dataset.hi;w.textContent=on?`instead of ${p.dataset.hi}`:''})});
+</script>
+</body></html>

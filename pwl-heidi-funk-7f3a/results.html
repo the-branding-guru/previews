@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Results — Passionate Wisdom Leaders</title><meta name="description" content="Executive coaching for leaders who have done the proving and are ready for the giving. Heidi Katara Funk, 30 years with Fortune 500 leaders."/><meta name="robots" content="noindex"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/></head><body>
+<div class="ribbon">SKELETON · built for Heidi Katara Funk by The Branding Guru · not live · <a href="plan.html">the game plan →</a></div>
+<nav class="top"><div class="wrap nav-in">
+  <a class="brand" href="index.html"><img src="assets/IconTop1.png" alt=""/><b>Passionate Wisdom Leaders</b></a>
+  <div class="links" id="links"><a href="index.html">Home</a><a href="story.html">The Story</a><a href="roadmap.html">The Roadmap</a><a href="results.html">Results</a><a href="book.html">The Book</a><a href="work.html">Work With Me</a><a class="btn btn-primary" href="begin.html">Begin</a></div>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</div></nav>
+
+<section class="fold"><div class="wrap">
+  <p class="eyebrow rv">Results</p>
+  <h2 class="crown rv d1">What the leaders say.</h2>
+  <p class="lede rv d2">Real names, real titles, real organizations. Nothing here is a composite.</p>
+  <div class="carousel rv d3"><div class="slide on"><span class="qmark sheen-none">“</span><p>Thanks to Heidi's coaching, I'm a much more effective strategic leader. She also increased my confidence to help shape our strategic goals, objectives and plans versus just the ability to lead the execution of them. I cannot over-emphasize the importance of this.</p><cite><b>Rick Matthews</b>VP Production Operations and COE Leader, Aerospace Systems, Northrop Grumman, Florida</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi's coaching came at a perfect time. My organization was in turmoil, my team needed real cultural change and I was struggling to find my voice in the chaos. Through the coaching I was able to make real and lasting change that will serve my organization and my team for many years to come.</p><cite><b>Mark Parsons</b>Director of Engineering, Technical Services, Northrop Grumman, Utah</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi is an excellent executive coach as well as a master of transformational thinking. Over our three years together my organization's direct leadership as well as the high potentials grew beyond anything I would have ever imagined. It was empowering to see how the changes in me expanded my organization's capability to get things done as a servant leader.</p><cite><b>Christopher B. Cool</b>Vice President, Operations Optimization, Aerospace Systems, Northrop Grumman, California</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi Funk's work as an executive coach is a case study in effectiveness. Under Heidi's coaching the executive learns to understand the true requirements of his or her role, then discovers the root concepts which will drive success.</p><cite><b>A Northrop Grumman executive</b>Client results, passionatewisdomleaders.com</cite></div>
+    <div class="cnav"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button><div class="dots" id="dots"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></div></div>
+  </div>
+  <div class="logos rv d4"><span>Northrop Grumman</span><span>Aerospace Systems</span><span>Fortune 500 leaders since 1994</span></div>
+</div></section>
+<div class="wrap next"><a href="roadmap.html">← The Roadmap</a><a class="btn btn-ghost" href="book.html">The Book →</a></div>
+
+<footer><div class="wrap">
+  <div class="foot">
+    <img src="assets/Logo_PWL.png" alt="Passionate Wisdom Leaders" style="height:46px;width:auto"/>
+    <div>passionatewisdomleaders@gmail.com · <a href="plan.html">The game plan</a> · © Passionate Wisdom Leaders</div>
+  </div>
+  <a class="mythos" href="https://mythos.vision" target="_blank" rel="noopener">◐ Powered by <b>mythOS</b> · built by The Branding Guru</a>
+</div></footer>
+<script src="site.js"></script><script>
+const sl=[...document.querySelectorAll('.slide')],dt=[...document.querySelectorAll('#dots i')];let i=0,t;
+const show=n=>{i=(n+sl.length)%sl.length;sl.forEach((s,k)=>s.classList.toggle('on',k===i));dt.forEach((d,k)=>d.classList.toggle('on',k===i))};
+document.getElementById('prev').onclick=()=>{show(i-1);reset()};document.getElementById('next').onclick=()=>{show(i+1);reset()};
+dt.forEach((d,k)=>d.onclick=()=>{show(k);reset()});
+const reset=()=>{clearInterval(t);t=setInterval(()=>show(i+1),7000)};reset();
+</script>
+</body></html>
