@@ -250,3 +250,18 @@ body.leaving{animation:pageout .22s var(--ease) forwards}
 /* seam-proof: mask the frame itself so no edge can ever render */
 .hero-wall .wall{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 46%),linear-gradient(180deg,#000 0%,#000 70%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0%,#000 46%),linear-gradient(180deg,#000 0%,#000 70%,transparent 100%);mask-composite:intersect}
 @media (max-width:900px){.hero-wall .wall{-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%);-webkit-mask-composite:source-over;mask-composite:add}}
+/* ── Jack, Sep 16 12:54am: faded hero, right half, copy in front — every size */
+.hero-wall .wall{width:55%;opacity:.72}
+.hero-wall .wall img{object-position:62% 28%}
+.hero-wall .wall::before{background:linear-gradient(90deg,var(--paper) 0%,rgba(251,248,242,.6) 22%,rgba(251,248,242,0) 60%),linear-gradient(180deg,rgba(251,248,242,0) 65%,var(--paper) 100%)}
+.hero-wall .wall{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 55%),linear-gradient(180deg,#000 0%,#000 72%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 55%),linear-gradient(180deg,#000 0%,#000 72%,transparent 100%)}
+@media (max-width:900px){
+  .hero-wall{padding:2.5rem 0 3rem;min-height:calc(100dvh - var(--header-height))}
+  .hero-wall .wall{position:absolute;top:0;right:0;bottom:0;width:78%;height:auto;min-height:0;opacity:.42}
+  .hero-wall .wall img{object-position:82% 16%}
+  .hero-wall .wall::before{background:linear-gradient(90deg,var(--paper) 0%,rgba(251,248,242,.55) 30%,rgba(251,248,242,0) 70%),linear-gradient(180deg,rgba(251,248,242,0) 55%,var(--paper) 100%)}
+  .hero-wall .wall{-webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 60%),linear-gradient(180deg,#000 0%,#000 60%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0%,#000 60%),linear-gradient(180deg,#000 0%,#000 60%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect}
+  .hero-copy{margin-top:0}
+  .hero-copy>*{max-width:88%}
+  .hero-copy .lotus-bg{display:none}
+}
