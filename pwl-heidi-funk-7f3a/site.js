@@ -1,6 +1,6 @@
 (function(){
   const nav=document.querySelector('nav.top');
-  const setH=()=>document.documentElement.style.setProperty('--header-height',nav.offsetHeight+'px');
+  const setH=()=>{const h=Math.round(nav.getBoundingClientRect().height);if(h>0&&h<200)document.documentElement.style.setProperty('--header-height',h+'px')};
   setH();addEventListener('resize',setH);
   const b=document.getElementById('burger'),l=document.getElementById('links');
   if(b&&l){b.addEventListener('click',()=>{const o=l.classList.toggle('open');b.setAttribute('aria-expanded',o)});l.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{l.classList.remove('open');b.setAttribute('aria-expanded',false)}))}

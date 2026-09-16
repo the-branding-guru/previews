@@ -29,8 +29,8 @@ h3{font-size:1.5rem}
 .ribbon{background:var(--ink);color:#fff;font-size:.78rem;text-align:center;padding:.45rem 1rem;letter-spacing:.08em}
 .ribbon a{color:var(--gold)}
 /* nav — hold clause */
-nav.top{position:sticky;top:0;z-index:30;background:rgba(251,248,242,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:var(--header-height)}
+nav.top{position:sticky;top:0;z-index:30;height:75px;box-sizing:border-box;overflow:visible;background:rgba(251,248,242,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:74px}
 .brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;flex:0 0 auto}
 .brand img{height:36px;width:auto}
 .brand b{font-family:var(--serif);font-size:1.28rem;color:var(--plum);font-weight:700;white-space:nowrap}
