@@ -14,7 +14,7 @@
 <section class="fold"><div class="wrap">
   <p class="eyebrow rv">Begin</p>
   <h2 class="crown rv d1">Twenty minutes. Bring the thing you've been circling.</h2>
-  <p class="lede rv d2">Pick a day, pick a time. On the live site this lands on both calendars in one click. No email tennis, no typing.</p>
+  <p class="lede rv d2">Pick a day and a time, then tell me five things. It takes about two minutes, and it means our twenty are spent on you rather than on background.</p>
   <div class="booking rv d3">
     <div><p class="eyebrow" style="margin-bottom:.6rem">Pick a day</p><div class="days" id="days"></div></div>
     <div><p class="eyebrow" style="margin-bottom:.6rem">Pick a time <span class="tiny">(Pacific)</span></p><div class="slots" id="slots"><button class="slot">9:00 am</button><button class="slot">11:30 am</button><button class="slot">2:00 pm</button><button class="slot">4:30 pm</button></div>
@@ -22,7 +22,42 @@
       <button class="btn btn-primary" id="book" style="margin-top:1rem;width:100%;justify-content:center">Book the call</button>
     </div>
   </div>
-  <div class="confirm" id="confirm"><p class="eyebrow">Booked (concept)</p><h3 id="cf-line" style="margin:.4rem 0">You're on the calendar.</h3><p class="tiny">On the live site this sends both invites, a reminder the morning of, and one line from Heidi: "Bring the thing you've been circling."</p></div>
+  <!-- CONSOLIDATED INTAKE — added Sep 24 2026.
+       Deliberately five questions, not thirty. This is a FREE twenty-minute
+       call, and a long form on a free call is how you get an empty calendar.
+       Everything here earns its place by making the call itself shorter:
+       Heidi arrives knowing the impulse, the obstacle, what's been tried, what
+       winning looks like, and whether the person is actually in a position to
+       begin. Question 5 is the readiness sort — asked as a timing question,
+       not a budget interrogation, with the three prices already visible on
+       Work With Me so the number is never a surprise. -->
+  <div class="intake rv d3" id="intake">
+    <p class="eyebrow" style="margin-bottom:.2rem">Before we talk</p>
+    <h3 class="intake-h">Five things, about two minutes.</h3>
+    <p class="tiny" style="margin-bottom:1.4rem">There are no wrong answers here, and nothing you write is shared with anyone.</p>
+
+    <label class="q" for="q1">What are you leading right now &mdash; and what has you reaching for something more?</label>
+    <textarea class="field ta" id="q1" rows="3" placeholder="A sentence or two is plenty."></textarea>
+
+    <label class="q" for="q2">What is actually in the way?</label>
+    <textarea class="field ta" id="q2" rows="3" placeholder="The honest version, not the tidy one."></textarea>
+
+    <label class="q" for="q3">What have you already tried?</label>
+    <textarea class="field ta" id="q3" rows="2" placeholder="So we don't spend our twenty minutes on ground you've covered."></textarea>
+
+    <label class="q" for="q4">If this works, what is different six months from now?</label>
+    <textarea class="field ta" id="q4" rows="2" placeholder="Name the change you'd be able to point at."></textarea>
+
+    <label class="q">Are you in a position to invest in coaching in the next 90 days?</label>
+    <p class="tiny" style="margin:-.2rem 0 .7rem">Engagements run three, six or twelve months &mdash; the prices are on <a href="work.html">Work With Me</a>. Answer honestly; “exploring” is a real answer and still worth a call.</p>
+    <div class="ready" id="ready">
+      <button type="button" class="ready-opt" data-v="Yes — ready to begin">Yes, ready to begin</button>
+      <button type="button" class="ready-opt" data-v="Exploring — serious, timing unclear">Exploring, timing unclear</button>
+      <button type="button" class="ready-opt" data-v="Not yet — want the conversation first">Not yet, want the conversation</button>
+    </div>
+  </div>
+
+  <div class="confirm" id="confirm"><p class="eyebrow">Booked (concept)</p><h3 id="cf-line" style="margin:.4rem 0">You're on the calendar.</h3><p class="tiny" id="cf-note"></p><p class="tiny">On the live site this sends both invites, a reminder the morning of, and one line from Heidi: "Bring the thing you've been circling."</p></div>
   <p class="tiny" style="margin-top:1.6rem">Prefer email? <a href="mailto:passionatewisdomleaders@gmail.com?subject=A%2020-minute%20call">passionatewisdomleaders@gmail.com</a></p>
 </div></section>
 <div class="wrap next"><a href="work.html">← Work With Me</a></div>
@@ -40,6 +75,28 @@ while(made<8){if(dd.getDay()!==0&&dd.getDay()!==6){const b=document.createElemen
 let day=null,slot=null;
 days.querySelectorAll('.day').forEach(b=>b.onclick=()=>{days.querySelectorAll('.day').forEach(x=>x.classList.remove('on'));b.classList.add('on');day=b.dataset.label});
 document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{document.querySelectorAll('.slot').forEach(x=>x.classList.remove('on'));b.classList.add('on');slot=b.textContent});
-document.getElementById('book').onclick=()=>{const nm=document.getElementById('nm').value.trim();if(!day||!slot){alert('Pick a day and a time.');return}document.getElementById('cf-line').textContent=`${nm||'You'}: ${day} at ${slot}, with Heidi.`;const c=document.getElementById('confirm');c.classList.add('on');c.scrollIntoView({behavior:'instant',block:'center'})};
+// Readiness is single-select and optional — a required budget question on a
+// free call is where booking rates go to die.
+let ready=null;
+document.querySelectorAll('.ready-opt').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.ready-opt').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-pressed','false')});
+  b.classList.add('on');b.setAttribute('aria-pressed','true');ready=b.dataset.v});
+document.getElementById('book').onclick=()=>{
+  const nm=document.getElementById('nm').value.trim();
+  if(!day||!slot){alert('Pick a day and a time.');return}
+  // Concept build: the answers are gathered and shown back, so the shape of
+  // the real submission is visible. On the live site this posts to Heidi.
+  const answers={name:nm,email:document.getElementById('em').value.trim(),day:day,slot:slot,
+    leading:document.getElementById('q1').value.trim(),inTheWay:document.getElementById('q2').value.trim(),
+    tried:document.getElementById('q3').value.trim(),sixMonths:document.getElementById('q4').value.trim(),
+    readiness:ready};
+  try{sessionStorage.setItem('pwl.intake',JSON.stringify(answers))}catch(e){}
+  document.getElementById('cf-line').textContent=`${nm||'You'}: ${day} at ${slot}, with Heidi.`;
+  const filled=['leading','inTheWay','tried','sixMonths'].filter(k=>answers[k]).length;
+  const note=document.getElementById('cf-note');
+  if(note) note.textContent = filled
+    ? `Your ${filled} answer${filled>1?'s':''}${ready?' and where you are on timing':''} go to Heidi before the call, so she arrives already caught up.`
+    : 'You can add your answers any time before the call — or just bring them with you.';
+  const c=document.getElementById('confirm');c.classList.add('on');c.scrollIntoView({behavior:'instant',block:'center'})};
 </script>
 </body></html>

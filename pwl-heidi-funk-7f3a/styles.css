@@ -265,3 +265,20 @@ body.leaving{animation:pageout .22s var(--ease) forwards}
   .hero-copy>*{max-width:88%}
   .hero-copy .lotus-bg{display:none}
 }
+
+/* ——— CONSOLIDATED INTAKE (begin) ———
+   Added Sep 24 2026. Sits between the booking grid and the confirmation so
+   picking a slot and answering happen in one pass. Fields are generous and
+   quiet: this is a coach's page, and a form that looks like a sales
+   qualification form reads as one. */
+.intake{background:#fff;border:1px solid var(--line);border-radius:20px;padding:1.6rem 1.5rem;margin-top:1.6rem}
+.intake-h{font-family:var(--serif);font-size:1.5rem;margin:.1rem 0 .3rem}
+.q{display:block;font-weight:700;font-size:.95rem;margin-top:1.15rem}
+.ta{resize:vertical;line-height:1.5}
+.ready{display:flex;flex-wrap:wrap;gap:.6rem}
+.ready-opt{font-family:var(--sans);font-size:.9rem;padding:.7rem 1.1rem;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.ready-opt:hover{border-color:var(--plum)}
+.ready-opt.on{background:var(--plum);border-color:var(--plum);color:#fff}
+.ready-opt:focus-visible{outline:2px solid var(--plum);outline-offset:3px}
+@media (max-width:560px){.ready-opt{width:100%;text-align:center}}
+@media (prefers-reduced-motion: reduce){.ready-opt{transition:none}}
