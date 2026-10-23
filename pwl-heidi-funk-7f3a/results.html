@@ -27,6 +27,11 @@
      does not belong in its source. The specifics live in Jack's notes.
      Ask, then add. Do not quietly drop it either — she asked for it first. -->
 <div class="carousel rv d3"><div class="slide on"><span class="qmark sheen-none">“</span><p>I had the privilege of working with Heidi over a six-month period, and I can't recommend her highly enough. Each time we met, I was facing a new challenge, and Heidi consistently helped me cut through complexity to get to the heart of the issue and identify a clear, practical way forward. She was instrumental in helping me navigate a pivotal career transition and step confidently into a significantly expanded leadership role. I especially appreciated her holistic approach — she supports you as a whole person, not just as a professional from nine to five.</p><cite><b>Trevor Springman</b>Vice President of Growth, Defense Sector, Peraton</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>I had the privilege of working with Heidi during a critical period in my career as a newer, young Vice President. Her guidance, advice and support were truly transformational. She helped me navigate the intricacies of leadership, managing &ldquo;up&rdquo;, honing my skills, and boosting my confidence. I not only overcame the obstacles I faced but also exceeded my own expectations.</p><cite><b>Lauren Stevens</b>Aerospace &amp; Defense Leader</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Working with Heidi Funk has been an extraordinary experience. She brings a rare blend of empathy, insight, and strategic clarity to every interaction. Her approach to co-creation makes you feel genuinely seen and heard — she doesn't impose direction, she builds it with you. What truly sets Heidi apart is her ability to remove barriers and unconscious bias that often limit growth, both personally and organizationally. Heidi isn't just a coach — she's a catalyst for meaningful change.</p><cite><b>Michael Pritchard</b>Director of Field Operations and Sustainment, Epirus Inc.</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>She has a wonderful ability to ask thoughtful questions, challenge perspectives, and create space for meaningful reflection and personal growth. Her work with the Conversational Intelligence Dashboard was particularly impactful, helping me better understand how I relate to myself and others. Her coaching was especially valuable as I navigated the transition from an executive role to becoming a business owner.</p><cite><b>Cade Wambolt, CPA</b>Founder, Savvyment &middot; Fractional CFO</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Thanks to Heidi's coaching, I'm a much more effective strategic leader. She also increased my confidence to help shape our strategic goals, objectives and plans versus just the ability to lead the execution of them. I cannot over-emphasize the importance of this.</p><cite><b>Rick Matthews</b>VP Production Operations and COE Leader, Aerospace Systems, Northrop Grumman, Florida</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi's coaching came at a perfect time. My organization was in turmoil, my team needed real cultural change and I was struggling to find my voice in the chaos. Through the coaching I was able to make real and lasting change that will serve my organization and my team for many years to come.</p><cite><b>Mark Parsons</b>Director of Engineering, Technical Services, Northrop Grumman, Utah</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi is an excellent executive coach as well as a master of transformational thinking. Over our three years together my organization's direct leadership as well as the high potentials grew beyond anything I would have ever imagined. It was empowering to see how the changes in me expanded my organization's capability to get things done as a servant leader.</p><cite><b>Christopher B. Cool</b>Vice President, Operations Optimization, Aerospace Systems, Northrop Grumman, California</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>Heidi Funk's work as an executive coach is a case study in effectiveness. Under Heidi's coaching the executive learns to understand the true requirements of his or her role, then discovers the root concepts which will drive success. She helped me look beyond my normal tool kit to see more innovative and effective solutions. My executive performance enhanced by Heidi's work has contributed to real cost savings of at least $100M in the past three years.</p><cite><b>Gene Fraser</b>Vice President, Programs, Quality and Engineering, Northrop Grumman, New York</cite></div><div class="slide"><span class="qmark sheen-none">“</span><p>She was my executive coach and helped me navigate all the major changes our international organization was going through. The coaching took my leadership skills and effectiveness to the next level of executive presence — my supervisor started giving me more responsibility and preparing me for the executive ranks. Heidi was also the team coach for the international leadership team reporting to the Senior Vice President. All three of the teams she worked with improved their leadership, communication and collaboration.</p><cite>Senior Director, Business Development &amp; Strategy, Mission Systems, Northrop Grumman, Maryland</cite></div></div>
+  <div class="cnav" role="group" aria-label="Recommendations">
+    <button type="button" id="recPrev" aria-label="Previous recommendation">‹</button>
+    <button type="button" id="recNext" aria-label="Next recommendation">›</button>
+    <span id="recCount" style="margin-left:.6rem;color:var(--ink-soft);font-size:.95rem"></span>
+  </div>
   </div>
   <div class="logos rv d4"><span>Northrop Grumman</span><span>Aerospace Systems</span><span>CEOs and founders</span><span>Fortune 500 leaders since 1994</span></div>
 </div></section>
@@ -45,5 +50,32 @@ const show=n=>{i=(n+sl.length)%sl.length;sl.forEach((s,k)=>s.classList.toggle('o
 document.getElementById('prev').onclick=()=>{show(i-1);reset()};document.getElementById('next').onclick=()=>{show(i+1);reset()};
 dt.forEach((d,k)=>d.onclick=()=>{show(k);reset()});
 const reset=()=>{clearInterval(t);t=setInterval(()=>show(i+1),7000)};reset();
+</script>
+<script>
+/* Carousel controls. The markup carried nine .slide nodes and a CSS rule that
+   hides every one without .on — but nothing ever moved `on`, and there were no
+   buttons, so only the first recommendation was reachable. Heidi reported this
+   on Oct 6 as "only one testimonial"; it was read as a content gap and it was
+   actually this. Keyboard-operable, announces position, wraps both ways. */
+(function () {
+  var slides = [].slice.call(document.querySelectorAll('.carousel .slide'));
+  if (slides.length < 2) return;
+  var i = Math.max(0, slides.findIndex(function (s) { return s.classList.contains('on'); }));
+  var count = document.getElementById('recCount');
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function (s, k) { s.classList.toggle('on', k === i); });
+    if (count) count.textContent = (i + 1) + ' of ' + slides.length;
+  }
+  var prev = document.getElementById('recPrev');
+  var next = document.getElementById('recNext');
+  if (prev) prev.addEventListener('click', function () { show(i - 1); });
+  if (next) next.addEventListener('click', function () { show(i + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') show(i - 1);
+    if (e.key === 'ArrowRight') show(i + 1);
+  });
+  show(i);
+})();
 </script>
 </body></html>
