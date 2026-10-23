@@ -14,12 +14,13 @@
   <p class="eyebrow rv">Work with me</p>
   <h2 class="crown rv d1">One-on-one transformational executive coaching.</h2>
   <p class="lede rv d2">Three lengths. Every engagement begins with a 30-minute discovery call, a conversation to see if we are a fit. If we are, you will already know the price before you decide.</p>
+  <div class="toggle" role="group" aria-label="Payment option"><button type="button" id="payFull" class="on">Paid in full</button><button type="button" id="payPlan">Payment plan</button></div>
   <div class="tiers rv d3">
-    <div class="tier"><span class="len">Three months</span><div class="price">3 months</div><div class="was"></div><div class="note">The ignition. For a leader with one clear threshold to cross.</div>
+    <div class="tier"><span class="len">Three months</span><div class="price" data-full="$5,000" data-plan="$6,500">$5,000</div><div class="was" data-full="" data-plan="">three months</div><div class="note">The ignition. For a leader with one clear threshold to cross.</div>
       <ul><li>60-minute sessions, twice a month</li><li>One three-hour deep-dive session on Zoom</li><li>Unlimited access via email</li><li>Spot coaching by phone, as needed, on a reasonable basis</li><li>Your Structure for Success</li></ul><a class="btn btn-ghost" href="begin.html">Book the discovery call</a></div>
-    <div class="tier hi"><span class="badge">Most chosen</span><span class="len">Six months</span><div class="price">6 months</div><div class="was"></div><div class="note">The transformation. Everything in three months, and deeper.</div>
+    <div class="tier hi"><span class="badge">Most chosen</span><span class="len">Six months</span><div class="price" data-full="$10,000" data-plan="$13,000">$10,000</div><div class="was" data-full="" data-plan="">six months</div><div class="note">The transformation. Everything in three months, and deeper.</div>
       <ul><li>60-minute sessions, twice a month</li><li>Two three-hour deep-dive sessions on Zoom</li><li>Unlimited access via email</li><li>Spot coaching by phone, as needed, on a reasonable basis</li><li>Assessments and stakeholder meetings (boss, colleague, customer, spouse), as needed</li><li>Your Structure for Success, which you keep refining</li></ul><a class="btn btn-primary" href="begin.html">Book the discovery call</a></div>
-    <div class="tier"><span class="len">One year</span><div class="price">12 months</div><div class="was"></div><div class="note">The legacy. You, and the team you lead.</div>
+    <div class="tier"><span class="len">One year</span><div class="price" data-full="$20,000" data-plan="$25,000">$20,000</div><div class="was" data-full="" data-plan="">one year</div><div class="note">The legacy. You, and the team you lead.</div>
       <ul><li>60-minute sessions, twice a month</li><li>Three three-hour deep-dive sessions on Zoom</li><li>Unlimited access via email, Monday to Friday</li><li>Spot coaching by phone, as needed, on a reasonable basis</li><li>Assessments and stakeholder meetings (boss, colleague, customer, spouse), as needed</li><li>Impact on your team, your organization and your personal life</li></ul><a class="btn btn-ghost" href="begin.html">Book the discovery call</a></div>
   </div>
   <p class="tiny rv d3" style="margin-top:.9rem">Assessments are paid for by the client. Confidential sessions, play-work co-created with you, and a Structure for Success you keep refining are part of every length.</p>
@@ -40,5 +41,33 @@
 <script src="site.js?v=1790000002"></script><script>
 const sw=document.getElementById('pif'),note=document.getElementById('pif-note');
 sw.addEventListener('click',()=>{const on=sw.classList.toggle('on');sw.setAttribute('aria-checked',on);note.textContent=on?'Paid-in-full price shown.':'Toggle to see the paid-in-full price.';document.querySelectorAll('.tier').forEach(t=>{const p=t.querySelector('.price'),w=t.querySelector('.was');p.textContent=on?p.dataset.lo:p.dataset.hi;w.textContent=on?`instead of ${p.dataset.hi}`:''})});
+</script>
+<script>
+/* Pricing toggle. `.price` and an empty `.was` existed in every tier and
+   `.toggle button.on` was already styled, but nothing populated or switched
+   them — the price slots held the duration instead of a number. Paid-in-full
+   is the lower end of each range she gave; the payment plan is the upper end,
+   shown with the paid-in-full price struck beside it so the saving is visible
+   rather than argued. */
+(function () {
+  var prices = [].slice.call(document.querySelectorAll('.tiers .price'));
+  if (!prices.length) return;
+  var full = document.getElementById('payFull');
+  var plan = document.getElementById('payPlan');
+  function render(mode) {
+    prices.forEach(function (el) {
+      el.textContent = el.getAttribute('data-' + mode);
+      var was = el.nextElementSibling;
+      if (was && was.classList.contains('was')) {
+        was.textContent = mode === 'plan' ? el.getAttribute('data-full') + ' paid in full' : '';
+      }
+    });
+    if (full) full.classList.toggle('on', mode === 'full');
+    if (plan) plan.classList.toggle('on', mode === 'plan');
+  }
+  if (full) full.addEventListener('click', function () { render('full'); });
+  if (plan) plan.addEventListener('click', function () { render('plan'); });
+  render('full');
+})();
 </script>
 </body></html>
